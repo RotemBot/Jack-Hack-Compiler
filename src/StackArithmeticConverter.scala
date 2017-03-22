@@ -1,9 +1,11 @@
 import java.io.File
-import java.nio.file.{Files, Paths}
+import java.nio.file.Files
+import java.nio.file.Paths
 
 import scala.collection.JavaConverters._
 import scala.collection.mutable.ArrayBuffer
 import util.control.Breaks._
+
 
 /**
   * Created by rotem on 19/03/2017.
@@ -27,14 +29,14 @@ object StackArithmeticConverter {
       val filePath = Paths.get(file)
       val fileLines = Files.readAllLines(filePath)
 
-      for(line <- fileLines.asScala.toList) {
+      for (line <- fileLines.asScala.toList) {
         breakable {
           //Continue if the line is empty
-          if(line.length <= 0 ) break
+          if (line.length <= 0) break
 
           //Continue if the line is a comment
           val firstTwoChars = line(0).toString + line(1).toString
-          if(firstTwoChars.equals("//")) break
+          if (firstTwoChars.equals("//")) break
 
           //Send the line to be converted and written in .asm file
           convertLine(newFile, line)
@@ -44,6 +46,7 @@ object StackArithmeticConverter {
     }
 
   }
+
 
   /**
     * returns the list of relevant files
@@ -79,6 +82,10 @@ object StackArithmeticConverter {
     val tokens = oldFile.split("""\.""") // Use a regex to avoid empty tokens
     val newFile = tokens(0) + ".asm"
     val path = Paths.get(newFile)
+    // if the file already exists, overwrite it
+    if(Files.exists(path)) {
+      path.toFile.delete()
+    }
     Files.createFile(path)
     newFile
   }
